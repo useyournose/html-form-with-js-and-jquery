@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <head>
+        <title>Calc the Geld</title>
+        <script type="text/javascript">
+            function buttonclick(value) {
+                value2 = parseInt(value);
+                base = 123456;
+                if (value2 > base * 2) {
+                    alert("die variabilität übertrifft das fixum. please try again.");
+                    return;
+                }
+                var header = ["Zeitraum","Fixum p.A.","Monatsgehalt","Variabilität p.A.","Zielgehalt","Anteil Fixum","Anteil Vatiabilität"];
+                var data = [];
+                data[0] = header;
+                for (i=1;i<=3;i++) {
+                    data[i] = maketable2(base,value2,i-1);
+                }
+                var cityTable = makeTable($('#cityTable'), data);
+            }
+
+            function maketable2(base,value,modificator) {
+                a = base * (1 + ((modificator)/100)*3) ;
+                b = a - (value/2);
+                c = (b + value);
+                row = ["Jahr "+ (modificator + 1)
+                    , b.toLocaleString('de-DE', {style : 'currency', currency: 'EUR'})
+                    , (b/12).toLocaleString('de-DE', {style : 'currency', currency: 'EUR'})
+                    , value.toLocaleString('de-DE', {style : 'currency', currency: 'EUR'})
+                    , c.toLocaleString('de-DE', {style : 'currency', currency: 'EUR'})
+                    , ((b/c)*100).toLocaleString('de-DE', {maximumFractionDigits: '1'}) + " %"
+                    , ((value/c)*100).toLocaleString('de-DE', {maximumFractionDigits: '1'}) + " %" ];
+                return row;
+            }
+
+            function makeTable(container, data) {
+                $(container).empty();
+                var table = $("<table/>").addClass('table table-bordered table-sm');
+                $.each(data, function(rowIndex, r) {
+                    var row = $("<tr/>");
+                    $.each(r, function(colIndex, c) { 
+                        row.append($("<t"+(rowIndex == 0 ?  "h" : "d")+"/>").text(c));
+                    });
+                    table.append(row);
+                });
+                table.children('tr:has(th)').wrapAll('<thead>');
+                table.children('tr:has(td)').wrapAll('<tbody>');
+                return container.append(table);
+            };
+        </script>
+   </head>
+    <body>
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+        <script>
+                $(document).ready(function() {
+                    buttonclick(0);
+                });
+        </script>
+        <div class="container">
+            <div class="jumbotron">
+                <h1>Gehaltsrechner</h1>
+                <p>Bitte geben Sie den variablen Anteil in Euro pro Jahr ein.</p>
+                <form name="input" action="javascript:buttonclick(message.value)">
+                    <div class="form-group">
+                        <input class="form-control input-lg" type="textarea" id="message" name="VA" onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null : event.charCode >= 48 && event.charCode <= 57" />
+                    </div>
+                  <button class="btn btn-lg btn-primary" type="submit">Show it!</button>
+                </form>
+            </div>
+        </div>
+        <div class="container">
+            <div class="jumbotron" id="jumbo">
+                <h1>Gehaltsplan</h1>
+                <div class="table-responsive" id="cityTable" style="text-align: center">
+                </div>
+            </div>
+        </div>
+        <footer class="footer">
+			<div class"container" style="text-align: center">
+                <span class="text-muted"><i>This app is brought you by <a href="https://github.com/useyournose">useyournose</a>!</i></span>
+			</div>
+        </footer>
+    </body>
+</html>
